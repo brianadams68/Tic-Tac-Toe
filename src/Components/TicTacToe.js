@@ -11,6 +11,13 @@ const TicTacToe = () => {
     newBoard[i] = xIsNext ? 'X' : 'O';
     setBoard(newBoard);
     setXIsNext(!xIsNext);
+
+    if (!newBoard.includes(null) && !calculateWinner(newBoard)) return;
+    if (!newBoard.includes(null) || calculateWinner(newBoard)) {
+        setTimeout(() => {
+            resetGame();
+          }, 3000);
+      }
   };
 
   const renderSquare = (i) => (
@@ -20,7 +27,17 @@ const TicTacToe = () => {
   );
 
   const winner = calculateWinner(board);
-  const status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`;
+  const isBoardFull = board.every((square) => square !== null);
+  const status = winner
+  ? `Winner: ${winner}`
+  : isBoardFull
+  ? "It's a tie!"
+  : `Next player: ${xIsNext ? 'X' : 'O'}`;
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null)); 
+    setXIsNext(true);
+  };
 
   return (
     <div className="game">
