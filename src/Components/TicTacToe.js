@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const TicTacToe = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -10,7 +10,7 @@ const TicTacToe = () => {
       const timeoutId = setTimeout(computerMove, 1000);
       return () => clearTimeout(timeoutId);
     }
-     // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [board, xIsNext]);
 
   const calculateWinner = (squares) => {
@@ -27,7 +27,11 @@ const TicTacToe = () => {
 
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      if (
+        squares[a] &&
+        squares[a] === squares[b] &&
+        squares[a] === squares[c]
+      ) {
         return squares[a];
       }
     }
@@ -42,46 +46,67 @@ const TicTacToe = () => {
       return acc;
     }, []);
 
-    // Check for a winning move for 'O'
+    let bestMove = -1;
+    let bestScore = -Infinity;
+
     for (let i = 0; i < emptyCells.length; i++) {
       const newBoard = [...board];
-      newBoard[emptyCells[i]] = 'O';
-      if (calculateWinner(newBoard) === 'O') {
-        setBoard(newBoard);
+      newBoard[emptyCells[i]] = "O";
+      const score = minimax(newBoard, 0, false);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = emptyCells[i];
+      }
+    }
+
+    if (bestMove !== -1) {
+      const newBoard = [...board];
+      newBoard[bestMove] = "O";
+      setBoard(newBoard);
+      setXIsNext(true);
+
+      const winner = calculateWinner(newBoard);
+      if (winner || !newBoard.includes(null)) {
         setGameOver(true);
         setTimeout(() => {
           resetGame();
         }, 3000);
-        return;
       }
     }
+  };
 
-    // Check for a blocking move for 'X'
-    for (let i = 0; i < emptyCells.length; i++) {
-      const newBoard = [...board];
-      newBoard[emptyCells[i]] = 'X';
-      if (calculateWinner(newBoard) === 'X') {
-        newBoard[emptyCells[i]] = 'O';
-        setBoard(newBoard);
-        setXIsNext(true);
-        return;
-      }
+  const minimax = (currentBoard, depth, isMaximizing) => {
+    const result = calculateWinner(currentBoard);
+    if (result === "O") {
+      return 1;
+    } else if (result === "X") {
+      return -1;
+    } else if (currentBoard.includes(null) === false) {
+      return 0;
     }
 
-    // If no winning or blocking moves, choose a random empty cell
-    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-
-    const newBoard = [...board];
-    newBoard[randomIndex] = 'O';
-    setBoard(newBoard);
-    setXIsNext(true);
-
-    const winner = calculateWinner(newBoard);
-    if (winner || !newBoard.includes(null)) {
-      setGameOver(true);
-      setTimeout(() => {
-        resetGame();
-      }, 3000);
+    if (isMaximizing) {
+      let bestScore = -Infinity;
+      for (let i = 0; i < currentBoard.length; i++) {
+        if (currentBoard[i] === null) {
+          currentBoard[i] = "O";
+          const score = minimax(currentBoard, depth + 1, false);
+          currentBoard[i] = null;
+          bestScore = Math.max(score, bestScore);
+        }
+      }
+      return bestScore;
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < currentBoard.length; i++) {
+        if (currentBoard[i] === null) {
+          currentBoard[i] = "X";
+          const score = minimax(currentBoard, depth + 1, true);
+          currentBoard[i] = null;
+          bestScore = Math.min(score, bestScore);
+        }
+      }
+      return bestScore;
     }
   };
 
@@ -93,7 +118,11 @@ const TicTacToe = () => {
 
   const renderSquare = (i) => (
     <button className="square" onClick={() => handleClick(i)}>
-      <span className={board[i] === 'X' ? 'x-style' : (board[i] === 'O' ? 'o-style' : '')}>
+      <span
+        className={
+          board[i] === "X" ? "x-style" : board[i] === "O" ? "o-style" : ""
+        }
+      >
         {board[i]}
       </span>
     </button>
@@ -103,7 +132,7 @@ const TicTacToe = () => {
     if (gameOver || board[i]) return;
 
     const newBoard = [...board];
-    newBoard[i] = xIsNext ? 'X' : 'O';
+    newBoard[i] = xIsNext ? "X" : "O";
     setBoard(newBoard);
     setXIsNext(!xIsNext);
 
@@ -122,7 +151,7 @@ const TicTacToe = () => {
     ? `Winner: ${winner}`
     : isBoardFull
     ? "It's a tie!"
-    : `Next player: ${xIsNext ? 'X' : 'O'}`;
+    : `Next player: ${xIsNext ? "X" : "O"}`;
 
   return (
     <div className="game">
