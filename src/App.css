@@ -62,7 +62,7 @@
 }
 
 .x-style {
-  color: #FF5733;
+  color: #572364;
   font-family: 'Permanent Marker';
   font-style: normal;
   font-variant: normal;
@@ -71,7 +71,7 @@
 }
 
 .o-style {
-  color: #33FF57;
+  color: #90EE90;
   font-family: 'Permanent Marker';
   font-style: normal;
   font-variant: normal;
@@ -103,7 +103,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #333;
 }
 
 .App-link {
